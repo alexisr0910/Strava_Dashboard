@@ -22,7 +22,7 @@ Lors de l'installation, j'ai rencontré des difficultés liées à la puissance 
 * **Historique** : Paramétrage de la date de début au **1er janvier 2015** afin d'importer l'intégralité de mon historique sportif.
 * **Sécurité** : Les identifiants sensibles (`Client ID`, `Client Secret`) sont gérés uniquement dans l'interface locale d'Airbyte.
 
-####  Configuration de la Destination (Google BigQuery)
+#### Configuration de la Destination (Google BigQuery)
 Pour le stockage et l'analyse, j'ai choisi **Google BigQuery** comme Data Warehouse Cloud pour sa capacité à gérer de gros volumes et sa facilité de connexion aux outils de visualisation.
 
 * **Projet GCP (Google Cloud Platform)** : Création du projet `dashboardstrava1`.
