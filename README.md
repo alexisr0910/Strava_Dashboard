@@ -46,3 +46,19 @@ J'ai configuré deux modes différents dans Airbyte pour optimiser le pipeline :
 
 ![img_1.png](img_1.png)
 ---
+
+## Phase 2 : Transformation (Couche ODS)
+
+L'objectif de cette étape est de transformer les données brutes (`strava_raw`) pour créer un dataset ODS (`strava_ods`) propre et structuré.
+
+### Objectifs de la couche ODS
+* **Nettoyage** : Passage d'un format JSON à une structure SQL exploitable.
+* **Extraction des données** : Sélection des seules données jugées pertinentes (distance, vitesse, dénivelé, kudos, etc.).
+* **Données sensibles** : Suppression définitive des coordonnées GPS et des identifiants personnels dès cette étape pour ne pas les stocker dans le reste du projet.
+
+### Points techniques de la mise en place
+* **Vérification du typage** : Utilisation d'une table de test (`test_format`) pour confirmer que BigQuery et Airbyte interprètent correctement les types numériques (`NUMERIC`, `INTEGER`).
+* **Traitement du JSON** : Extraction des données imbriquées pour la table `athlete_stats`. J'ai utilisé la fonction **`CAST`** pour transformer les données textuelles issues du JSON en formats numériques, ce qui permet de réaliser des calculs par la suite.
+
+> **Pour consulter le détail du mapping, les justifications de filtrage et les échantillons de données, voir : [Documentation détaillée ODS](./docs/ODS/README.md)**
+---
