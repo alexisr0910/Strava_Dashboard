@@ -62,3 +62,48 @@ L'objectif de cette étape est de transformer les données brutes (`strava_raw`)
 
 > **Pour consulter le détail du mapping, les justifications de filtrage et les échantillons de données, voir : [Documentation détaillée ODS](./docs/ODS/README.md)**
 ---
+
+---
+
+## Phase 3 : Modélisation (Couche DWH)
+
+L'objectif de cette dernière étape de transformation est de passer d'une structure de données "plate" à un **modèle dimensionnel (Schéma en Étoile)** dans le dataset `strava_dwh`. Ce modèle est optimisé pour les performances et la clarté des analyses dans Power BI.
+
+### Architecture du modèle en étoile
+Pour ce projet, j'ai structuré les données autour d'une table de faits centrale et de plusieurs dimensions :
+
+* **Table de Faits (`fct_activites`)** : Centralise toutes les mesures granulaires (distance, temps, vitesse).
+* **Dimensions (`dim_calendar`, `dim_moment_journee`)** : Fournissent le contexte temporel et horaire pour filtrer les données.
+* **Table Snapshot (`fct_global_stats`)** : Stocke les totaux historiques depuis 2015 pour servir de référentiel de vérité.
+
+### Logique de transformation et calculs métiers
+Plusieurs transformations ont été opérées pour normaliser les indicateurs de performance :
+
+1.  **Standardisation des unités** : Conversion des données brutes en unités lisibles : mètres vers **kilomètres**, m/s vers **km/h**, et secondes vers **minutes**.
+2.  **Calcul de l'allure ** : Création de la métrique `allure_min_km`. C'est l'indicateur principal pour la course à pied, calculé via `SAFE_DIVIDE` pour garantir la stabilité du pipeline.
+3.  **Choix du format numérique** : Les durées sont stockées en format **décimal** (`FLOAT64`) et non en format horaire. Ce choix technique permet à Power BI de réaliser des calculs mathématiques (moyennes, sommes) avant le formatage visuel final.
+4.  **Localisation (Français)** : Contrairement aux réglages par défaut de BigQuery (Anglais), j'ai intégré la traduction des jours et des mois directement en SQL via des instructions `CASE`. Cela permet de livrer un dataset "prêt à l'emploi" pour la visualisation.
+
+### Optimisation pour la visualisation
+* **Clé primaire** : Création d'un `date_id` (format `YYYYMMDD`) pour lier les activités au calendrier.
+* **Gestion du tri** : Ajout d'une colonne `ordre_tri` dans la dimension pour forcer Power BI à afficher les moments de la journée (Matin, Midi, Soir) chronologiquement plutôt qu'alphabétiquement.
+
+> **Pour consulter le détail de la structure du modèle, les formules SQL et les choix de modélisation, voir : [Documentation détaillée DWH](./docs/DWH/README.md)**
+---
+
+## Pistes d'amélioration
+
+Ce projet constitue une **PoC (Proof of Concept)** solide qui démontre la viabilité du flux. Le pipeline est actuellement **semi-automatique** car il dépend d'un environnement local, mais plusieurs axes permettraient de le passer au niveau industriel :
+
+### 1. Automatisation
+Actuellement, le pipeline dépend d'Airbyte tournant sur mon Mac (Docker).
+* **Amélioration** : Déployer Airbyte sur une instance et utiliser les **Scheduled Queries** de BigQuery. Cela permettrait une synchronisation et une transformation des données totalement autonomes durant la nuit, sans dépendance matérielle.
+
+### 2. Monitoring et Alerting
+Le suivi du pipeline nécessite aujourd'hui une vérification visuelle après chaque exécution.
+* **Amélioration** : Mettre en place un système de notifications (Email) pour être alerté en cas d'échec de la synchronisation ou d'une erreur SQL.
+* **Référence professionnelle** : Cette méthodologie est celle que j'applique dans le cadre de mon alternance au CHU. Chaque script de traitement génère un fichier de log détaillé. Ces fichiers sont ensuite parcourus par un automate qui remonte par mail un rapport d'état chaque matin, permettant de valider le bon déroulement des flux nocturnes ou d'intervenir rapidement en cas d'anomalie.
+
+### 3. Orchestration
+Les transformations SQL sont déclenchées manuellement de manière indépendante.
+* **Amélioration** : Utiliser un orchestrateur pour gérer les dépendances (ex: ne pas lancer le DWH si l'ODS a échoué).
