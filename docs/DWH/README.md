@@ -70,7 +70,7 @@ Les requêtes SQL finales pour la couche DWH sont archivées dans le dossier `sc
 ## 6. Visualisation des tables finales
 
 ### Vue de la table de faits `fct_activites`
-![img.png](img.png)
+![img.png](../../images/fct_activites.png)
 
 ### Vue de la dimension `dim_calendar`
-![img_2.png](img_2.png)
+![img_2.png](../../images/dim_calendar.png)

@@ -6,7 +6,7 @@ SELECT
     -- Dates
     start_date_local, timezone,
 
-    -- Physique (Déjà en NUMERIC/INTEGER d'après ton test)
+    -- Physique
     distance, moving_time, elapsed_time, total_elevation_gain,
 
     -- Altitudes

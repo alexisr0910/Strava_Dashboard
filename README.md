@@ -2,9 +2,11 @@
 
 Ce projet implémente un pipeline ELT (Extract, Load, Transform) complet pour automatiser la récupération de mes données Strava et les transformer en données exploitables.
 
+###  [Consulter le Dashboard Power BI](https://app.powerbi.com/view?r=eyJrIjoiZGI0ZDRmZWUtMjQ5Zi00ZjU1LTllMzQtZjU2ZTYyNDczOTBhIiwidCI6IjI3YTU4YjYzLTg2ODQtNDBmNy1iNzM3LWM5YTUzNGU2NTc0NSJ9)
+
 ##  Choix Technologiques & Architecture
 
-### Phase 1 : Récupérer des données (Extract & Load)
+## Phase 1 : Récupérer des données (Extract & Load)
 * **Source** : API Strava (OAuth2).
 * **Outil de transport** : **Airbyte Open Source** déployé sur Docker.
 
@@ -32,7 +34,7 @@ Pour le stockage et l'analyse, j'ai choisi **Google BigQuery** comme Data Wareho
     * `Administrateur Storage` : Sert de zone tampon pour fluidifier l'importation des gros volumes.
 * **Dataset** : Données stockées dans `strava_raw` (Localisation : EU).
 
-![img.png](img.png)
+![img.png](images/Airbyte_connexion.png)
 
 ##  Paramétrage du flux (Sync Mode)
 
@@ -44,7 +46,7 @@ J'ai configuré deux modes différents dans Airbyte pour optimiser le pipeline :
 * **Statistiques (`Full Refresh | Overwrite`)** :
   Pour mes records personnels et totaux globaux, j'ai choisi de remplacer intégralement les données à chaque passage. Ces informations n'ayant pas d'ID unique, ce mode est nécessaire pour garantir des données toujours à jour.
 
-![img_1.png](img_1.png)
+![img_1.png](images/Airbyte_data.png)
 ---
 
 ## Phase 2 : Transformation (Couche ODS)
@@ -107,3 +109,26 @@ Le suivi du pipeline nécessite aujourd'hui une vérification visuelle après ch
 ### 3. Orchestration
 Les transformations SQL sont déclenchées manuellement de manière indépendante.
 * **Amélioration** : Utiliser un orchestrateur pour gérer les dépendances (ex: ne pas lancer le DWH si l'ODS a échoué).
+
+---
+### Power BI
+---
+
+# Phase 4 : Conception du Dashboard (Power BI)
+
+![img.png](images/Mode_nuit.png)
+
+Cette dernière étape permet de mettre en image tout le travail effectué en amont sur BigQuery pour transformer la donnée brute en outil d'analyse.
+
+### Pourquoi Power BI ?
+Le choix de Power BI s'est imposé naturellement car j'ai pu aborder cet outil lors de mes cours en **Master MIAGE**. Ce projet était l'occasion parfaite de le reprendre en main sur un thème personnel comme Strava. De plus, sa capacité à se connecter nativement à **Google BigQuery** était un avantage majeur pour garantir un flux de données fluide et performant.
+
+### Apprentissage et prise en main
+Même si j'avais des bases, j'ai souhaité pousser l'outil plus loin pour ce projet. J'ai appris à utiliser des fonctions avancées à l'aide de l'IA et de vidéos YouTube spécialisées. Cela m'a permis d'intégrer des spécificités précises pour améliorer l'expérience utilisateur :
+
+* **Design Dynamique (Mode Jour/Nuit)** : Création d'un switch intelligent via des signets (bookmarks) et des mesures DAX pour adapter l'interface à l'environnement de consultation.
+* **Mesures Dynamiques** : Mise en place de sélecteurs permettant de basculer instantanément l'affichage entre les **valeurs réelles** et les **pourcentages**, offrant ainsi deux niveaux de lecture sur un même visuel.
+* **Esthétique** : Travail approfondi sur le design (ombres portées, contrastes adoucis, codes couleurs Strava) pour transformer mon rapport en une interface proche d'une application mobile moderne.
+
+> **Toutes les explications techniques, les captures d'écran du rendu final et le détail du design se trouvent dans le dossier dédié : [Documentation Visualisation](visualisation/README.md)**
+> 

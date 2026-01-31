@@ -5,8 +5,8 @@ Ce document détaille la logique de transformation des données brutes issues de
 ## 1. Analyse des données sources 
 
 Avant de créer les tables, j'ai vérifié la récupération des données avec une requête simple :
-`SELECT * FROM dashboardstrava1.strava_raw.activities` et `SELECT * FROM dashboardstrava1.strava_raw.athlete_stats`.
-![img.png](img.png)
+`SELECT * FROM dashboardstrava1.strava_raw.activities`.
+![img.png](../../images/activities.png)
 
 J'ai ensuite relevé deux types d'activités (natation et course à pied) ainsi que les données sur les statistiques globales de l'athlète.
 
@@ -77,7 +77,7 @@ Les requêtes SQL finales utilisées pour générer cette couche ODS sont archiv
 
 
 ODS Activité vue final  : 
-![img_1.png](img_1.png)
+![img_1.png](../../images/ODS_Activité.png)
 
 ODS Atlhete Stat vue final : 
-![img_2.png](img_2.png)
+![img_2.png](../../images/ODS_Atlhete.png)
